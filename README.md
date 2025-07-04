@@ -1,2 +1,2 @@
 # expression-evaluator-Java
-An expression evaluator in Java
+A terminal expression evaluator in Java
