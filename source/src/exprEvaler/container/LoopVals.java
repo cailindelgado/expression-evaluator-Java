@@ -1,9 +1,9 @@
-package container;
+package exprEvaler.container;
 
 /**
  * A class designed to hold three doubles
  */
-class LoopVals {
+public class LoopVals {
     private final double[] values;
 
     /**
@@ -25,17 +25,32 @@ class LoopVals {
     }
 
     /**
+     * This is a getter function to retrieve the value at the specified position in the
+     * array. If an invalid index is provided then {@link IndexOutOfBoundsException} is
+     * thrown.
+     * @param index An index to retrieve the value of the held array at a certain position
+     * @throws IndexOutOfBoundsException if an invalid index is provided
+     * @return The value held at the given index
+     */
+    public double getValue(int index) {
+        if (index <= 2 && index >= 0) {
+            return this.values[index];
+        }
+        throw new IndexOutOfBoundsException("Invlid index provided");
+    }
+
+    /**
      * This is a setter method for setting one of the three positions of the held array to be the
      * given value
      * @param index The index position of the array to be changed or set
      * @param value The value to set at the given @index@
-     * @return 0 if successful and old(values) != /new(values), 1 if index provided is out of range
+     * @throws IndexOutOfBoundsException if the given index is not within the a valid range.
      */
-    public int setValues(int index, double value) {
-        if (index >= 3 || index < 0) {
+    public void setValues(int index, double value) {
+        if (index <= 2 && index >= 0) {
             this.values[index] = value;
-            return 0;
+            return;
         }
-        return 1;
+        throw new IndexOutOfBoundsException("Invalid index provided");
     }
 }

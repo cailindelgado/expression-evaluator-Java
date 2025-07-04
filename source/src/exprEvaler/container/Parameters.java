@@ -1,6 +1,5 @@
-package container;
+package exprEvaler.container;
 
-import container.LoopVals;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,8 +9,8 @@ import java.util.Map;
 public class Parameters {
     private int significantFigs; // predefined number of significant figures to be displayed
     private String fName;
-    private Map<String, Double> vars;
-    private Map<String, LoopVals> loops;
+    private final Map<String, Double> vars;
+    private final Map<String, LoopVals> loops;
 
     /**
      * Initialises all the private members of the class
@@ -40,21 +39,17 @@ public class Parameters {
 
     /**
      * This function takes in a string representation of an integer, converts it to an integer and
-     * sets the existing significant figures to be said value
-     * @param value A string representation of an integer
+     * sets the existing significant figures to be said value.
+     * @param value A string representation of an integer.
+     * @throws NumberFormatException if the provided value is not a valid sigfigs number.
      */
-    public int setSigs(String value) {
-        try {
-            int val = Integer.parseInt(value);
-            if (val >= 2 && val <= 7) {
-                this.significantFigs = val;
-                return val;
-            } else {
-                return 0;
-            }
-        } catch (NumberFormatException e) {
-            System.err.println("The given value is not a valid integer\n");
-            return 0;
+    public int setSigs(String value) throws NumberFormatException {
+        int val = Integer.parseInt(value);
+        if (val >= 2 && val <= 7) {
+            this.significantFigs = val;
+            return val;
+        } else {
+            throw new NumberFormatException("sigfigs is invalid");
         }
     }
 
@@ -80,7 +75,7 @@ public class Parameters {
      * @param var The name of the variable
      * @return It's value within the HashMap, if it exists
      */
-    public double getVar(String var) {
+    public Double getVar(String var) {
         return this.vars.get(var);
     }
 
@@ -91,29 +86,30 @@ public class Parameters {
      * string is invalid then this does nothing
      * @param loop The name of the looping variable as a string
      * @param vals The details of how the loop is supposed to work
+     * @throws NumberFormatException if any part of vals is invalid
      */
     public void addLoop(String loop, String vals) {
         String[] bits = vals.split(",");
         if (bits.length == 3) {
-            LoopVals newLoop = null;
+            double[] values = {0, 1, 2};
             for (int idx = 0; idx < 3; idx++) {
-                try {
-                    double value = Double.parseDouble(bits[idx]);
-                    newLoop.setValues(idx, value);
-
-                } catch (NumberFormatException e) {
-                    System.err.println("Invalid parameter for looping variable");
-                }
-
+                double value = Double.parseDouble(bits[idx]);
+                values[idx] = value;
             }
-
+            if ((values[0] - values[2] < 0 && values[1] < 0) ||
+                    (values[0] - values[2] > 0 && values[1] > 0) ||
+                    (values[0] == values[2] && values[1] == 0)) {
+                LoopVals newLoop = new LoopVals(values[0], values[1], values[2]);
+                this.loops.put(loop, newLoop);
+            }
         }
     }
 
     /**
-     *
-     * @param loop
-     * @return
+     * A getter method to return the loop variables information when the loop variables name is
+     * provided
+     * @param loop The name of a loop variable which may or may not be in the array
+     * @return Either the loop's information or null if it doesn't exist within the array
      */
     public LoopVals getLoop(String loop) {
         return this.loops.get(loop);
